@@ -20,11 +20,11 @@ public class ItemService {
         this.itemRepository = itemRepository;
     }
 
-    public List<Item> getAllItemsWithPaginationAndSorting(int page, int size, String sortBy, String sortDirection) {
+    public Page<Item> getAllItemsWithPaginationAndSorting(int page, int size, String sortBy, String sortDirection) {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Item> itemPage = itemRepository.findAll(pageable);
-        return itemPage.getContent();
+        return itemPage;
     }
     public Item createItem(Item item) {
         return itemRepository.save(item);

@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -21,14 +22,19 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Item>> getAllItems(
+    public ResponseEntity<?> getAllItems(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDirection) {
+        Page<Item> items = itemService.getAllItemsWithPaginationAndSorting(page, size, sortBy, sortDirection);
+        HashMap<String,Object> hm=new HashMap<>();
+        hm.put("content",items.getContent());
+        hm.put("pageNo",items.getNumber());
+        hm.put("pageSize",items.getSize());
+        hm.put("total-Elements",items.getTotalElements());
 
-        List<Item> items = itemService.getAllItemsWithPaginationAndSorting(page, size, sortBy, sortDirection);
-        return ResponseEntity.ok(items);
+        return ResponseEntity.ok().body(hm);
     }
     @PostMapping
     public ResponseEntity<Item> createItem(@RequestBody Item newItem) {
